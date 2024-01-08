@@ -12,10 +12,12 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("fontGlyphLoader", &fontGlyphLoader);
 
-    const QUrl url(u"qrc:/IconFontLoader/Main.qml"_qs);
+    const QUrl url(u"qrc:/assets/src/ui/Main.qml"_qs);
+
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
         []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
+
     engine.load(url);
 
     return app.exec();
