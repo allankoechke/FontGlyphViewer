@@ -9,6 +9,11 @@ Item {
 
     signal clicked
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.clicked()
+    }
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
@@ -45,11 +50,6 @@ Item {
                 }
             }
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.clicked()
     }
 }
 
