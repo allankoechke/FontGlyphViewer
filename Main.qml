@@ -20,7 +20,7 @@ Window {
         }
 
         function onFontLoadingFinished(fontMap) {
-            console.log(JSON.stringify(fontMap))
+            // console.log(JSON.stringify(fontMap))
 
             var glyphs = fontMap['glyphs']
             fontFamily = fontMap['family']
@@ -29,6 +29,10 @@ Window {
             for(var i=0; i<glyphs.length; i++) {
                 fontModel.append({'glyph': glyphs[i]})
             }
+        }
+
+        function onCopiedToClipboard() {
+            console.log('Copied to clipboard')
         }
     }
 
@@ -80,6 +84,7 @@ Window {
         cellHeight: 100
         cellWidth: 100
         delegate: Item {
+            id: glyphdelegate
             width: fontgrid.cellWidth
             height: fontgrid.cellHeight
 
@@ -91,7 +96,7 @@ Window {
                 color: '#ccc'
 
                 Text {
-                    text: String.fromCharCode(parseInt(parent.parent.iconGlyph, 16))
+                    text: String.fromCharCode(parseInt(glyphdelegate.iconGlyph, 16))
                     font.pixelSize: 28
                     anchors.horizontalCenter: parent.horizontalCenter
                     verticalAlignment: Text.AlignVCenter
@@ -99,7 +104,6 @@ Window {
                     anchors.bottom: copyrect.top
                     font.family: app.fontFamily
                 }
-
 
                 Rectangle {
                     id: copyrect
@@ -109,9 +113,17 @@ Window {
                     anchors.bottom: parent.bottom
 
                     Text {
-                        text: '\\u' + parent.parent.parent.iconGlyph
+                        text: '\\u' + glyphdelegate.iconGlyph
                         font.pixelSize: 12
                         anchors.centerIn: parent
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            // Copy to clipboard
+                            fontGlyphLoader.copyToClipboard('\\u' + glyphdelegate.iconGlyph);
+                        }
                     }
                 }
             }
@@ -123,7 +135,7 @@ Window {
         currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
         nameFilters: ["Font files (*.ttf *.otf)"]
         onAccepted: {
-            console.log(selectedFile)
+            // console.log(selectedFile)
             fontGlyphLoader.loadFont(selectedFile)
         }
     }

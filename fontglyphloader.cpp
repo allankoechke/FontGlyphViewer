@@ -41,3 +41,9 @@ void FontGlyphLoader::loadFont(const QString &path)
         emit fontLoadError("Error");
     }
 }
+
+void FontGlyphLoader::copyToClipboard(const QString &text)
+{
+    clipboard->setText(text);
+    emit copiedToClipboard();
+}
