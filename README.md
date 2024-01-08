@@ -5,6 +5,9 @@ Font icons are a popular way of distributing and embedding vector-based icons. S
 
 ![](img/screenshot.png)
 
+
+![](img/screenshot2.png)
+
 # Usage
 Still in development
 
