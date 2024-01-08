@@ -1,16 +1,34 @@
 import QtQuick
+import QtCore
+import QtQuick.Dialogs
 
 Window {
+    id: app
     width: 640
     height: 480
     visible: true
     title: qsTr("Font Glyph Loader")
 
     property ListModel fontModel: ListModel{}
+    property string fontFamily
 
-    Component.onCompleted: {
-        for(var i=0; i<50; i++) {
-            fontModel.append({'name': i})
+    Connections {
+        target: fontGlyphLoader
+
+        function onFontLoadError(error) {
+            console.log("Font Loading Error")
+        }
+
+        function onFontLoadingFinished(fontMap) {
+            console.log(JSON.stringify(fontMap))
+
+            var glyphs = fontMap['glyphs']
+            fontFamily = fontMap['family']
+
+            fontModel.clear()
+            for(var i=0; i<glyphs.length; i++) {
+                fontModel.append({'glyph': glyphs[i]})
+            }
         }
     }
 
@@ -20,6 +38,31 @@ Window {
         width: parent.width
         anchors.top: parent.top
         color: '#ccc'
+
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            radius: 8
+            color: 'grey'
+            width: _rbtn.width + 20
+            height: parent.height - 10
+
+            Row {
+                id: _rbtn
+                anchors.centerIn: parent
+
+                Text {
+                    text: qsTr("Open")
+                    font.pixelSize: 16
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: { fileDialog.open() }
+            }
+        }
     }
 
     GridView {
@@ -40,11 +83,48 @@ Window {
             width: fontgrid.cellWidth
             height: fontgrid.cellHeight
 
+            property string iconGlyph: glyph
+
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 4
-                color: '#444'
+                color: '#ccc'
+
+                Text {
+                    text: String.fromCharCode(parseInt(parent.parent.iconGlyph, 16))
+                    font.pixelSize: 28
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.top: parent.top
+                    anchors.bottom: copyrect.top
+                    font.family: app.fontFamily
+                }
+
+
+                Rectangle {
+                    id: copyrect
+                    height: 30
+                    width: parent.width
+                    color: '#bbb'
+                    anchors.bottom: parent.bottom
+
+                    Text {
+                        text: '\\u' + parent.parent.parent.iconGlyph
+                        font.pixelSize: 12
+                        anchors.centerIn: parent
+                    }
+                }
             }
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+        nameFilters: ["Font files (*.ttf *.otf)"]
+        onAccepted: {
+            console.log(selectedFile)
+            fontGlyphLoader.loadFont(selectedFile)
         }
     }
 }
