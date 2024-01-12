@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
 #include <QIcon>
 #include "fontglyphloader.h"
 
@@ -9,6 +10,8 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 
     app.setWindowIcon(QIcon(":/assets/assets/logo.png"));
+
+    QQuickStyle::setStyle("Basic");
 
     FontGlyphLoader fontGlyphLoader;
 

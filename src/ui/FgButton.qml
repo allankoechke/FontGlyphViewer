@@ -1,29 +1,34 @@
 import QtQuick
+import QtQuick.Controls
 
-Rectangle {
+Button {
     id: root
-    radius: 8
-    color: 'transparent'
-    border.width: 1
-    border.color: 'grey'
-    width: _rbtn.width + 20
+    width: _rbtn.width + 30
     implicitHeight: 30
 
-    property string text: "Button"
-    signal clicked
+    property string color: theme.primaryAccent
+    property alias radius: bg.radius
 
-    Row {
-        id: _rbtn
-        anchors.centerIn: parent
-
-        Text {
-            text: root.text
-            font.pixelSize: 14
-        }
+    background: Rectangle {
+        id: bg
+        radius: height/2
+        color: root.down ? Qt.lighter(root.color) : root.color
+        border.width: 0
+        border.color: theme.primaryText
     }
 
-    MouseArea {
+    contentItem: Item {
         anchors.fill: parent
-        onClicked: root.clicked()
+
+        Row {
+            id: _rbtn
+            anchors.centerIn: parent
+
+            Text {
+                text: root.text
+                font.pixelSize: 14
+                color: theme.primaryText
+            }
+        }
     }
 }
