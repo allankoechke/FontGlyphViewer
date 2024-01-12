@@ -36,12 +36,17 @@ Window {
         }
     }
 
-    Rectangle {
+    Item {
         id: topbar
         height: 50
         width: parent.width
         anchors.top: parent.top
-        color: '#ccc'
+
+        Rectangle {
+            height: 1; width: parent.width
+            anchors.bottom: parent.bottom
+            color: 'silver'
+        }
 
         Text {
             text: fontFamily==='' ? "Select a font (.otf, .ttf)" : "Font: " + fontFamily

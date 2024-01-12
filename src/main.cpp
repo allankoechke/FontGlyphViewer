@@ -1,11 +1,14 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 #include "fontglyphloader.h"
 
 
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
+
+    app.setWindowIcon(QIcon(":/assets/assets/logo.png"));
 
     FontGlyphLoader fontGlyphLoader;
 
