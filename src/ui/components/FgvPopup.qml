@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import '../controls'
+
 Popup {
     id: root
     width: 200
@@ -37,7 +39,7 @@ Popup {
             }
         }
 
-        FgButton {
+        FgvButton {
             id: copybtn
             text: `Copy '\\u${glyph}'`
             onClicked: fontGlyphLoader.copyToClipboard('\\u' + glyph);

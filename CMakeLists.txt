@@ -10,17 +10,27 @@ qt_standard_project_setup()
 
 qt_add_executable(appFontGlyphViewer
     src/main.cpp
+    src/fontglyphloader.h
+    src/fontglyphloader.cpp
 )
 
 qt_add_qml_module(appFontGlyphViewer
     URI assets
     VERSION 1.0
-    QML_FILES src/ui/Main.qml
-    SOURCES src/fontglyphloader.h src/fontglyphloader.cpp
-    QML_FILES src/ui/FgButton.qml
-    QML_FILES src/ui/FgPopup.qml
-    QML_FILES src/ui/FgDelegate.qml
-    RESOURCES assets/logo.png
+    RESOURCES
+        assets/logo.png
+        assets/fonts/MaterialIcons-Regular.otf
+    QML_FILES
+        src/ui/Main.qml
+        src/ui/views/SideBar.qml
+        src/ui/views/ViewerPanel.qml
+        src/ui/delegates/SideBarDelegate.qml
+        src/ui/delegates/ViewerDelegate.qml
+        src/ui/controls/FgvButton.qml
+        src/ui/controls/FgvIcon.qml
+        src/ui/components/FgvNavigationBar.qml
+        src/ui/components/FgvPopup.qml
+        src/ui/Theme.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

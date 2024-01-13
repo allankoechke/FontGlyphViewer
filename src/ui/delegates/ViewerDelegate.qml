@@ -26,7 +26,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             anchors.top: parent.top
             anchors.bottom: copyrect.top
-            font.family: app.fontFamily
+            font.family: app.selectedFontFamily
             color: theme.secondaryText
         }
 

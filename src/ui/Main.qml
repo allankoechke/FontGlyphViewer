@@ -2,188 +2,138 @@ import QtQuick
 import QtCore
 import QtQuick.Dialogs
 import QtQuick.Controls
+import QtQuick.Layouts
+
+import 'views'
+import 'components'
 
 Window {
     id: app
-    width: 640
+    width: 720
     height: 480
     visible: true
     color: theme.primaryBackground
     title: qsTr("Font Glyph Viewer")
 
+    property bool isMobileScreen: width<=600
     property ListModel fontModel: ListModel{}
-    property string fontFamily
+    property ListModel glyphsModel: ListModel{}
+    property string selectedFontFamily: ''
+    property Theme theme: Theme{}
+    property ListElement currentFont
 
 
-    QtObject {
-        id: theme
+    function removeFontGlyph(family) {
 
-        // Background Colors
-        property string primaryBackground: "#121212"
-        property string secondaryBackground: "#1E1E1E"
-        property string tertiaryBackground: "#242424"
-
-        // Text Colors
-        property string primaryText: "#FFFFFF"
-        property string secondaryText: "#B3B3B3"
-        property string accentText: "#BB86FC"
-
-        // Accent Colors
-        property string primaryAccent: "#BB86FC"
-        property string secondaryAccent: "#03DAC6"
-        property string tertiaryAccent: "#CF6679"
-
-        // Border and Divider Colors
-        property string lightBorder: "#333333"
-        property string darkBorder: "#292929"
-
-        // Interactive Element Colors
-        property string normalInteractive: "#BB86FC"
-        property string hoverInteractive: "#3700B3"
-        property string activeInteractive: "#03DAC6"
-        property string disabledInteractive: "#666666"
-
-        // Error and Warning Colors
-        property string errorColor: "#CF6679"
-        property string warningColor: "#FFC107"
-        property string successColor: "#03DAC6"
-
-        // Shadows and Overlays
-        property string shadowColor: "rgba(0, 0, 0, 0.5)"
-        property string overlayColor: "rgba(255, 255, 255, 0.1)"
-    }
-
-
-    Connections {
-        target: fontGlyphLoader
-
-        function onFontLoadError(error) {
-            console.log("Font Loading Error")
-        }
-
-        function onFontLoadingFinished(fontMap) {
-            // console.log(JSON.stringify(fontMap))
-
-            var glyphs = fontMap['glyphs']
-            fontFamily = fontMap['family']
-
-            fontModel.clear()
-            for(var i=0; i<glyphs.length; i++) {
-                fontModel.append({'glyph': glyphs[i]})
+        for(var i=0; i<fontModel.count; i++) {
+            var font = fontModel.get(i)
+            if(font.name===family) {
+                fontModel.remove(i)
+                glyphsModel.clear();
+                selectedFontFamily=''
+                console.log(glyphsModel.count, fontModel.count)
+                break
             }
         }
-
-        function onCopiedToClipboard() {
-            console.log('Copied to clipboard')
-        }
     }
 
-    Item {
+    FgvNavigationBar {
         id: topbar
-        height: 50
-        width: parent.width
-        anchors.top: parent.top
+    }
 
-        Rectangle {
-            height: 1; width: parent.width
-            anchors.bottom: parent.bottom
-            color: theme.lightBorder
-        }
+    Loader {
+        anchors.top: topbar.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        sourceComponent: isMobileScreen ? smallScreenComponent : wideScreenComponent
+    }
 
-        Text {
-            text: fontFamily==='' ? "Select a font (.otf, .ttf)" : "Font: " + fontFamily
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-            anchors.leftMargin: 20
-            font.pixelSize: 16
-            color: theme.primaryText
-        }
+    Component {
+        id: smallScreenComponent
 
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: 20
-            spacing: 8
+        StackView {
+            id: stackView
+            width: parent.width
+            height: parent.height
+            initialItem: sideBarComponent
 
-            FgButton {
-                visible: fontFamily!==''
-                text: qsTr('Clear All')
-                color: theme.tertiaryAccent
-                anchors.verticalCenter: parent.verticalCenter
-                onClicked: {
-                    fontFamily=''
-                    fontModel.clear()
+            Component.onCompleted: {
+                console.log('Created StackView')
+                //handleMobileScreenChanges()
+            }
+
+            function handleMobileScreenChanges() {
+                console.log(isMobileScreen, fontFamily!=='')
+                if(isMobileScreen) {
+                    // If a font is already selected
+                    if(fontFamily!=='') {
+                        stackView.push(fontViewerComponent)
+                    }
+                } else {
+                    if(fontFamily==='') {
+                        stackView.pop(null)
+                    }
                 }
             }
 
-            FgButton {
-                text: qsTr('Open')
-                onClicked: fileDialog.open()
-                anchors.verticalCenter: parent.verticalCenter
+            Connections {
+                target: app
+
+                //function onIsMobileScreenChanged() { handleMobileScreenChanges(); }
             }
         }
     }
 
-    Text {
-        visible: fontModel.count===0 || fontFamily===''
-        text: qsTr('No font item found!')
-        font.pixelSize: 16
-        anchors.centerIn: parent
-        color: theme.secondaryText
-    }
+    Component {
+        id: wideScreenComponent
 
-    GridView {
-        id: fontgrid
-        visible: fontModel.count!==0 || fontFamily!==''
+        Item {
+            width: parent.width
+            height: parent.height
 
-        ScrollBar.vertical: ScrollBar {
-            id: scrollbar
-            active: fontgrid.moving || fontgrid.flicking
-            policy: ScrollBar.AlwaysOn
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
 
-            background: Rectangle {
-                width: 12
-                height: parent.height
-                color: Qt.rgba(0,0,0,0.6)
-                radius: width/2
-            }
+                Loader {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: parent.width/4
+                    sourceComponent: sideBarComponent
+                }
 
-            contentItem: Rectangle {
-                implicitWidth: 8
-                implicitHeight: 100
-                anchors.horizontalCenter: parent.horizontalCenter
-                radius: width / 2
-                color: scrollbar.pressed ? "#fff" : Qt.rgba(1,1,1,0.6)
-                opacity: scrollbar.policy === ScrollBar.AlwaysOn || (scrollbar.active && scrollbar.size < 1.0) ? 0.75 : 0
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 1
+                    color: theme.lightBorder
+                }
 
-                // Animate the changes in opacity (default duration is 250 ms).
-                Behavior on opacity {
-                    NumberAnimation {}
+                Loader {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    sourceComponent: fontViewerComponent
                 }
             }
         }
+    }
 
-        property real size: width/Math.round(width/100) // Get cellwidth based on dimension of the window
+    Component {
+        id: sideBarComponent
 
-        anchors {
-            top: topbar.bottom
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-            topMargin: 10
-            bottomMargin: 10
+        SideBar {
+            id: sideBar
+            width: parent.width
+            height: parent.height
         }
-        clip: true
-        model: fontModel
-        cellHeight: fontgrid.size
-        cellWidth: fontgrid.size
-        delegate: FgDelegate {
-            iconGlyph: glyph
-            onClicked: {
-                fgpopup.glyph = iconGlyph
-                fgpopup.glyphFamily = fontFamily
-                fgpopup.open()
-            }
+    }
+
+    Component {
+        id: fontViewerComponent
+
+        ViewerPanel {
+            id: fontViewer
+            width: parent.width
+            height: parent.height
         }
     }
 
@@ -197,7 +147,34 @@ Window {
         }
     }
 
-    FgPopup {
+    FgvPopup {
         id: fgpopup
+    }
+
+
+    Connections {
+        target: fontGlyphLoader
+
+        function onFontLoadError(error) {
+            console.log("Font Loading Error")
+        }
+
+        function onFontLoadingFinished(fontMap) {
+            var glyphs = fontMap['glyphs'];
+            var family = fontMap['family'];
+            var glyphsArray = [];
+
+            for(var i=0; i<glyphs.length; i++) {
+                glyphsArray.push({'glyph': glyphs[i]})
+            }
+
+            console.log('> ', glyphsArray.length)
+
+            fontModel.append({'name': family, 'glyphs': glyphsArray})
+        }
+
+        function onCopiedToClipboard() {
+            // console.log('Copied to clipboard')
+        }
     }
 }
