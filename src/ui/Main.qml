@@ -9,8 +9,8 @@ import 'components'
 
 Window {
     id: app
-    width: 720
-    height: 480
+    width: 1080
+    height: 720
     visible: true
     color: theme.primaryBackground
     title: qsTr("Font Glyph Viewer")
@@ -98,7 +98,7 @@ Window {
 
                 Loader {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width/4
+                    Layout.preferredWidth: Math.min(parent.width/4, 300)
                     sourceComponent: sideBarComponent
                 }
 
@@ -164,13 +164,21 @@ Window {
             var family = fontMap['family'];
             var glyphsArray = [];
 
+            if(!isMobileScreen) {
+                glyphsModel.clear()
+                selectedFontFamily=family
+            }
+
             for(var i=0; i<glyphs.length; i++) {
                 glyphsArray.push({'glyph': glyphs[i]})
+                if(!isMobileScreen) {
+                    glyphsModel.append({'glyph': glyphs[i]})
+                }
             }
 
             console.log('> ', glyphsArray.length)
-
             fontModel.append({'name': family, 'glyphs': glyphsArray})
+
         }
 
         function onCopiedToClipboard() {

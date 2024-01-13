@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 import '../delegates'
+import '../controls'
 
 Item {
     id: root
@@ -28,11 +29,43 @@ Item {
             }
         }
 
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: theme.lightBorder
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: !lv.visible
+
+            Column {
+                anchors.centerIn: parent
+                spacing: 20
+
+                FgvIcon {
+                    iconSize: 36
+                    iconSource: '\ue691'
+                    color: theme.secondaryText
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                Text {
+                    text: qsTr('No Font Added')
+                    font.pixelSize: 24
+                    color: theme.secondaryText
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+            }
+        }
+
         ListView {
             id: lv
             Layout.fillWidth: true
             Layout.fillHeight: true
             model: fontModel
+            visible: model.count > 0
             spacing: 4
             clip: true
             delegate:  SideBarDelegate {

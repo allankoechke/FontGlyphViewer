@@ -11,19 +11,13 @@ Item {
 
     signal clicked()
 
-    Rectangle{
-        height: 1
-        width: parent.width * 0.9
-        anchors.horizontalCenter: parent.horizontalCenter
-        color: selected ? 'transparent' : theme.darkBorder
-        anchors.bottom: parent.bottom
-    }
-
     Rectangle {
         height: parent.height
         width: parent.width * 0.9
         color: selected ? theme.darkBorder : 'transparent'
         anchors.centerIn: parent
+        border.width: selected ? 0 : 1
+        border.color: theme.darkBorder
         radius: 8
 
         Text {
@@ -41,7 +35,7 @@ Item {
             id: angleIcon
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            iconSize: 16
+            iconSize: 12
             color: selected ? theme.primaryText : theme.secondaryText
             iconSource: '\ue09c'
             rightPadding: 10

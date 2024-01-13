@@ -32,10 +32,17 @@ Item {
 
         Item {
             id: fontInfoItem
-            height: 30
+            height: 67
             width: parent.width
             anchors.top: parent.top
             anchors.left: parent.left
+
+            Rectangle {
+                width: parent.width
+                height: 1
+                color: theme.darkBorder
+                anchors.bottom: parent.bottom
+            }
 
             Text {
                 anchors.verticalCenter: parent.verticalCenter
@@ -52,6 +59,7 @@ Item {
                 spacing: 2
 
                 FgvButton {
+                    height: width
                     enabled: selectedFontFamily!==''
                     anchors.verticalCenter: parent.verticalCenter
                     leftIcon: '\uf815'
@@ -64,6 +72,7 @@ Item {
                 }
 
                 FgvButton {
+                    height: width
                     enabled: selectedFontFamily!==''
                     anchors.verticalCenter: parent.verticalCenter
                     leftIcon: '\ue312'
@@ -78,6 +87,7 @@ Item {
                 }
 
                 FgvButton {
+                    height: width
                     enabled: selectedFontFamily!==''
                     anchors.verticalCenter: parent.verticalCenter
                     leftIcon: '\ue1b9'

@@ -4,6 +4,7 @@ import QtQuick.Controls
 Item {
     id: root
     width: _rbtn.width + 30
+    // height: width
     implicitHeight: 30
 
     enum Type {
