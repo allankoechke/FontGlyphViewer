@@ -21,24 +21,14 @@ Window {
     property string selectedFontFamily: ''
     property Theme theme: Theme{}
     property ListElement currentFont
+    property FgvPopup fgpopup: FgvPopup{}
 
-
-    function removeFontGlyph(family) {
-
-        for(var i=0; i<fontModel.count; i++) {
-            var font = fontModel.get(i)
-            if(font.name===family) {
-                fontModel.remove(i)
-                glyphsModel.clear();
-                selectedFontFamily=''
-                console.log(glyphsModel.count, fontModel.count)
-                break
-            }
-        }
-    }
+    signal backButtonClicked()
 
     FgvNavigationBar {
         id: topbar
+
+        onBackButtonClicked: app.backButtonClicked()
     }
 
     Loader {
@@ -58,29 +48,30 @@ Window {
             height: parent.height
             initialItem: sideBarComponent
 
-            Component.onCompleted: {
-                console.log('Created StackView')
-                //handleMobileScreenChanges()
-            }
-
-            function handleMobileScreenChanges() {
-                console.log(isMobileScreen, fontFamily!=='')
-                if(isMobileScreen) {
-                    // If a font is already selected
-                    if(fontFamily!=='') {
-                        stackView.push(fontViewerComponent)
-                    }
-                } else {
-                    if(fontFamily==='') {
-                        stackView.pop(null)
-                    }
-                }
-            }
+            Component.onCompleted: handleMobileScreenChanges()
 
             Connections {
                 target: app
 
-                //function onIsMobileScreenChanged() { handleMobileScreenChanges(); }
+                function onBackButtonClicked() {
+                    stackView.pop()
+                    selectedFontFamily=''
+                }
+
+                function onSelectedFontFamilyChanged() {
+                    if(selectedFontFamily!=='') {
+                        stackView.push(fontViewerComponent)
+                    }
+                }
+            }
+
+            function handleMobileScreenChanges() {
+                if(isMobileScreen) {
+                    // If a font is already selected
+                    if(selectedFontFamily!=='') {
+                        stackView.push(fontViewerComponent)
+                    }
+                }
             }
         }
     }
@@ -147,11 +138,6 @@ Window {
         }
     }
 
-    FgvPopup {
-        id: fgpopup
-    }
-
-
     Connections {
         target: fontGlyphLoader
 
@@ -183,6 +169,20 @@ Window {
 
         function onCopiedToClipboard() {
             // console.log('Copied to clipboard')
+        }
+    }
+
+    function removeFontGlyph(family) {
+
+        for(var i=0; i<fontModel.count; i++) {
+            var font = fontModel.get(i)
+            if(font.name===family) {
+                fontModel.remove(i)
+                glyphsModel.clear();
+                selectedFontFamily=''
+                console.log(glyphsModel.count, fontModel.count)
+                break
+            }
         }
     }
 }

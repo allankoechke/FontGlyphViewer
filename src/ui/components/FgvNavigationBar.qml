@@ -34,6 +34,8 @@ Item {
             textColor: theme.primaryText
             buttonType: FgvButton.Text
             buttonIconType: FgvButton.LeftOnly
+
+            onClicked: topbar.backButtonClicked()
         }
 
         Text {
