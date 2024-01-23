@@ -8,11 +8,21 @@ import '../controls'
 Item {
     id: root
 
+    Connections {
+        target: fontModel
+
+        function onCountChanged() {
+            console.log('Count: ', fontModel.count)
+            filterModel(input.text)
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 10
 
         TextField {
+            id: input
             Layout.preferredWidth: parent.width * 0.9
             Layout.preferredHeight: 40
             Layout.alignment: Qt.AlignHCenter
@@ -27,6 +37,8 @@ Item {
                 border.width: 1
                 border.color: activeFocus ? theme.primaryAccent : theme.lightBorder
             }
+
+            onTextChanged: filterModel(text)
         }
 
         Rectangle {
@@ -64,7 +76,7 @@ Item {
             id: lv
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: fontModel
+            model: fontModelFiltered // input.text.trim()==='' ? fontModel : fontModelFiltered
             visible: model.count > 0
             spacing: 4
             clip: true

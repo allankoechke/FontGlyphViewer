@@ -13,15 +13,11 @@ void FontGlyphLoader::loadFont(const QString &path)
         QFont font(fontFamily);
         QRawFont rawFont = QRawFont::fromFont(font);
 
-        // qDebug() << "Family: " << fontFamily;
-
         QStringList glyphs;
 
         // Check for each Unicode character
         for (int unicode = 0; unicode <= 0x10FFFF; ++unicode) {
             if (rawFont.supportsCharacter(unicode)) {
-                // qDebug() << "Character:" << QString(QChar(unicode)) << " Unicode:" << unicode << QString::number(unicode, 16);
-                // glyphs[QString::number(unicode)] = QString(QChar(unicode));
                 glyphs.append(QString::number(unicode, 16));
             }
         }

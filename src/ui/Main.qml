@@ -18,6 +18,7 @@ Window {
     property bool isMobileScreen: width<=600
     property ListModel fontModel: ListModel{}
     property ListModel glyphsModel: ListModel{}
+    property ListModel fontModelFiltered: ListModel{}
     property string selectedFontFamily: ''
     property Theme theme: Theme{}
     property ListElement currentFont
@@ -182,6 +183,20 @@ Window {
                 selectedFontFamily=''
                 console.log(glyphsModel.count, fontModel.count)
                 break
+            }
+        }
+    }
+
+    function filterModel(text) {
+        text = text.toString().trim().toLowerCase()
+        fontModelFiltered.clear()
+
+        for(var j=0; j<fontModel.count; j++) {
+            var obj = fontModel.get(j)
+            var name = obj['name']
+            if(name.toLowerCase().includes(text)) {
+                console.log('Found: ', obj['name'])
+                fontModelFiltered.append(obj)
             }
         }
     }
