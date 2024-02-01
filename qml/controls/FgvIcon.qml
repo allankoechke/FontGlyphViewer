@@ -1,4 +1,4 @@
-import QtQuick
+import QtQuick 2.15
 
 Text {
     id: root
@@ -11,6 +11,6 @@ Text {
 
     FontLoader {
         id: fontLoader
-        source: "qrc:/assets/assets/fonts/MaterialIcons-Regular.otf"
+        source: "qrc:/assets/fonts/MaterialIcons-Regular.otf"
     }
 }

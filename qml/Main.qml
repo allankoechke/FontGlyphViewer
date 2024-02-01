@@ -1,8 +1,9 @@
-import QtQuick
-import QtCore
-import QtQuick.Dialogs
-import QtQuick.Controls
-import QtQuick.Layouts
+import QtQuick.Window 2.15
+import QtQuick 2.15
+import QtQuick.Dialogs 1.3
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import Qt.labs.platform 1.1
 
 import 'views'
 import 'components'
@@ -131,11 +132,11 @@ Window {
 
     FileDialog {
         id: fileDialog
-        currentFolder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
+        folder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
         nameFilters: ["Font files (*.ttf *.otf)"]
         onAccepted: {
             // console.log(selectedFile)
-            fontGlyphLoader.loadFont(selectedFile)
+            fontGlyphLoader.loadFont(file)
         }
     }
 
@@ -196,7 +197,7 @@ Window {
             var name = obj['name']
             if(name.toLowerCase().includes(text)) {
                 console.log('Found: ', obj['name'])
-                fontModelFiltered.append(obj)
+                // fontModelFiltered.append(obj)
             }
         }
     }

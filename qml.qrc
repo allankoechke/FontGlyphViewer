@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Main.qml</file>
+        <file>qml/Theme.qml</file>
+        <file>qml/views/SideBar.qml</file>
+        <file>qml/views/ViewerPanel.qml</file>
+        <file>qml/delegates/SideBarDelegate.qml</file>
+        <file>qml/delegates/ViewerDelegate.qml</file>
+        <file>qml/controls/FgvButton.qml</file>
+        <file>qml/controls/FgvIcon.qml</file>
+        <file>qml/components/FgvNavigationBar.qml</file>
+        <file>qml/components/FgvPopup.qml</file>
+        <file>assets/fonts/MaterialIcons-Regular.otf</file>
+        <file>assets/logo.png</file>
+    </qresource>
+</RCC>
