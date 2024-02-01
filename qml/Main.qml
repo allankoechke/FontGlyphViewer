@@ -20,113 +20,47 @@ Window {
     property ListModel fontModel: ListModel{}
     property ListModel glyphsModel: ListModel{}
     property ListModel fontModelFiltered: ListModel{}
-    property string selectedFontFamily: ''
     property Theme theme: Theme{}
     property ListElement currentFont
     property FgvPopup fgpopup: FgvPopup{}
 
-    signal backButtonClicked()
+    property string selectedFontFamily: ''
+
+    // signal backButtonClicked()
 
     FgvNavigationBar {
         id: topbar
 
-        onBackButtonClicked: app.backButtonClicked()
+        // onBackButtonClicked: app.backButtonClicked()
     }
 
-    Loader {
+    Item {
         anchors.top: topbar.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        sourceComponent: isMobileScreen ? smallScreenComponent : wideScreenComponent
-    }
 
-    Component {
-        id: smallScreenComponent
+        RowLayout {
+            anchors.fill: parent
+            spacing: 0
 
-        StackView {
-            id: stackView
-            width: parent.width
-            height: parent.height
-            initialItem: sideBarComponent
-
-            Component.onCompleted: handleMobileScreenChanges()
-
-            Connections {
-                target: app
-
-                function onBackButtonClicked() {
-                    stackView.pop()
-                    selectedFontFamily=''
-                }
-
-                function onSelectedFontFamilyChanged() {
-                    if(selectedFontFamily!=='') {
-                        stackView.push(fontViewerComponent)
-                    }
-                }
+            SideBar {
+                id: sideBar
+                Layout.fillHeight: true
+                Layout.preferredWidth: Math.min(parent.width/4, 300)
             }
 
-            function handleMobileScreenChanges() {
-                if(isMobileScreen) {
-                    // If a font is already selected
-                    if(selectedFontFamily!=='') {
-                        stackView.push(fontViewerComponent)
-                    }
-                }
+            Rectangle {
+                Layout.fillHeight: true
+                Layout.preferredWidth: 1
+                color: theme.lightBorder
             }
-        }
-    }
 
-    Component {
-        id: wideScreenComponent
-
-        Item {
-            width: parent.width
-            height: parent.height
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-
-                Loader {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: Math.min(parent.width/4, 300)
-                    sourceComponent: sideBarComponent
-                }
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: 1
-                    color: theme.lightBorder
-                }
-
-                Loader {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    sourceComponent: fontViewerComponent
-                }
+            ViewerPanel {
+                id: fontViewer
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
-        }
-    }
-
-    Component {
-        id: sideBarComponent
-
-        SideBar {
-            id: sideBar
-            width: parent.width
-            height: parent.height
-        }
-    }
-
-    Component {
-        id: fontViewerComponent
-
-        ViewerPanel {
-            id: fontViewer
-            width: parent.width
-            height: parent.height
         }
     }
 
@@ -135,7 +69,6 @@ Window {
         folder: StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]
         nameFilters: ["Font files (*.ttf *.otf)"]
         onAccepted: {
-            // console.log(selectedFile)
             fontGlyphLoader.loadFont(file)
         }
     }
@@ -164,7 +97,6 @@ Window {
                 }
             }
 
-            console.log('> ', glyphsArray.length)
             fontModel.append({'name': family, 'glyphs': glyphsArray})
 
         }
@@ -192,12 +124,22 @@ Window {
         text = text.toString().trim().toLowerCase()
         fontModelFiltered.clear()
 
-        for(var j=0; j<fontModel.count; j++) {
-            var obj = fontModel.get(j)
-            var name = obj['name']
-            if(name.toLowerCase().includes(text)) {
-                console.log('Found: ', obj['name'])
-                // fontModelFiltered.append(obj)
+        if(text==='')
+        {
+            for(var i=0; i<fontModel.count; i++)
+            {
+                var obj = fontModel.get(i);
+                fontModelFiltered.append({'name': obj.name, 'glyphs': obj.glyphs});
+            }
+        }
+
+        else {
+            for(var j=0; j<fontModel.count; j++) {
+                let obj = fontModel.get(j)
+                var name = obj['name']
+                if(name.toLowerCase().includes(text)) {
+                    fontModelFiltered.append({'name': obj.name, 'glyphs': obj.glyphs});
+                }
             }
         }
     }

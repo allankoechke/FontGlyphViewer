@@ -12,7 +12,6 @@ Item {
         target: fontModel
 
         function onCountChanged() {
-            console.log('Count: ', fontModel.count)
             filterModel(input.text)
         }
     }
@@ -64,7 +63,7 @@ Item {
                 }
 
                 Text {
-                    text: qsTr('No Font Added')
+                    text: input.text.trim()==='' ? qsTr('No Font Added') : qsTr('No Search Match')
                     font.pixelSize: 24
                     color: theme.secondaryText
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -76,7 +75,7 @@ Item {
             id: lv
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: fontModelFiltered // input.text.trim()==='' ? fontModel : fontModelFiltered
+            model: fontModelFiltered
             visible: model.count > 0
             spacing: 4
             clip: true
@@ -96,8 +95,6 @@ Item {
                     }
                     selectedFontFamily=name
                 }
-
-                Component.onCompleted: console.log(model.name, model.glyphs.count)
             }
 
             ScrollBar.vertical: ScrollBar {
